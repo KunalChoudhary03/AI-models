@@ -7,6 +7,6 @@ const httpServer = require('http').createServer(app);
 connectDb();
 initSocketServer(httpServer)
 httpServer.listen(3000,()=>{
-    console.log('Server is runnign on port 3000');
+    console.log('Server is running on port 3000');
     
 })
