@@ -1,13 +1,14 @@
-const {GoogleGenAI} =  require("@google/genai")
+const { GoogleGenAI } = require("@google/genai")
 
-const ai = new GoogleGenAI()
+const ai = new GoogleGenAI({})
 
-async function generateResponse(content){
+async function generateResponse(content) {
     const response = await ai.models.generateContent({
         model: "gemini-2.0-flash",
-        contents : content
+        contents: content
     })
     return response.text
 }
-
-module.exports = {generateResponse}
+module.exports = {
+    generateResponse
+}
