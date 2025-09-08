@@ -43,7 +43,9 @@ function initSocketServer(httpServer){
   const memory = await queryMemory({
     queryVector: vectors,
     limit: 3,
-    metadata: {}
+    metadata: {
+      user: socket.user._id
+    }
   })
   console.log(memory)
   await createMemory({
