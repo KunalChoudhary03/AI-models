@@ -128,3 +128,8 @@ module.exports = initSocketServer
 // 9. AI response --> converted into vector
 // 10. AI response vector + metadata --> saved in Pinecone
 // 11. AI response --> emitted back to client for display
+
+
+
+//actual flow
+//user message saved in Db --> generate vectore for user message -->query pinecon for related memories--> Save user message in pinecon --> Get chat history from the Db--> stm ,ltm --> generate response from the AI -->  save ai response in Db --> generate vecotor for Ai response --> save ai message in pinecone --> send ai response to user
