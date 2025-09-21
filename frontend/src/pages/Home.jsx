@@ -7,6 +7,9 @@ import ChatHeader from "../components/ChatHeader";
 import ChatMessages from "../components/ChatMessages";
 import ChatInputBar from "../components/ChatInputBar";
 import ThemeToggle from "../components/ThemeToggle"; // Import the theme toggle component
+import NamePromptModal from "../components/NamePromptModal";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
   const [currentChat, setCurrentChat] = useState({
@@ -30,6 +33,7 @@ const Home = () => {
     },
   ]);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
 
@@ -105,16 +109,23 @@ const Home = () => {
   };
 
   const handleNewChat = () => {
+    setShowNameModal(true);
+  };
+
+  const handleNameSubmit = (chatName) => {
+    setShowNameModal(false);
+    if (!chatName.trim()) return toast.error("Chat name cannot be empty!");
     const initialMessage = { id: 1, text: "Hello! How can I help you today?", sender: "ai" };
     const newChat = {
       id: Date.now().toString(),
-      title: "New Chat",
+      title: chatName,
       messages: [initialMessage],
       active: true,
     };
     setPreviousChats((prev) => [newChat, ...prev.map((chat) => ({ ...chat, active: false }))]);
     setCurrentChat({ messages: [initialMessage] });
     setShowSidebar(false);
+    toast.success(`New chat '${chatName}' created!`);
   };
 
   const handleSelectChat = (selectedChat) => {
@@ -126,24 +137,15 @@ const Home = () => {
   };
 
   const handleDeleteChat = (chatId, e) => {
-    e.stopPropagation(); // Prevent chat selection
-    
+    e.stopPropagation();
     setPreviousChats(prev => {
       const updatedChats = prev.filter(chat => chat.id !== chatId);
-      
-      // If we're deleting the active chat
       if (prev.find(chat => chat.id === chatId)?.active) {
         if (updatedChats.length > 0) {
-          // Make the first remaining chat active
           updatedChats[0].active = true;
           setCurrentChat(updatedChats[0]);
         } else {
-          // If no chats remain, create a new one
-          const initialMessage = { 
-            id: 1, 
-            text: "Hello! How can I help you today?", 
-            sender: "ai" 
-          };
+          const initialMessage = { id: 1, text: "Hello! How can I help you today?", sender: "ai" };
           const newChat = {
             id: Date.now().toString(),
             title: "New Chat",
@@ -154,9 +156,9 @@ const Home = () => {
           setCurrentChat({ messages: [initialMessage] });
         }
       }
-      
       return updatedChats;
     });
+    toast.info("Chat deleted!");
   };
 
   const MAX_VISIBLE_MESSAGES = 30; // Only keep last 30 messages visible
@@ -202,6 +204,12 @@ const Home = () => {
           handleSubmit={handleSubmit}
           handleTextareaInput={handleTextareaInput}
         />
+        <NamePromptModal
+          isOpen={showNameModal}
+          onClose={() => setShowNameModal(false)}
+          onSubmit={handleNameSubmit}
+        />
+        <ToastContainer position="top-right" autoClose={2500} hideProgressBar theme="colored" />
       </main>
     </div>
   );
